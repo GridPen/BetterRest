@@ -9,6 +9,14 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
+        ZStack{
+            LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .bottom, endPoint: .top)
+                .ignoresSafeArea()
+            
+            Text("Hello")
+                .font(.system(size: 20))
+        }
+
 
     }
 }
