@@ -10,23 +10,31 @@ import CoreML
 import SwiftUI
 
 struct ContentView: View {
-    @State private var wakeUp = Date.now
+    
+    @State private var wakeUp = defaultWakeTime
     @State private var sleepAmount = 8.0
     @State private var coffeeAmount = 1
+    @State private var shoingAlert = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
     
     
-    
+    static var defaultWakeTime: Date {
+        var components = DateComponents()
+        components.hour = 7
+        components.minute = 0
+        
+        return Calendar.current.date(from: components) ?? Date.now
+    }
     
     var body: some View {
+        
         NavigationView{
-            ZStack{
-                LinearGradient(gradient: Gradient(colors: [.blue, .white, .mint]), startPoint: .topLeading, endPoint: .bottomTrailing)
-                    .ignoresSafeArea()
-                
+            Form {
                 VStack{
                     Text("When you want to wake up?")
                         .font(.headline)
-                    DatePicker("Please enter a time", selection: $wakeUp, in: Date.now...,  displayedComponents: [.hourAndMinute])
+                    DatePicker("Please enter a time", selection: $wakeUp,  displayedComponents: [.hourAndMinute])
                         .labelsHidden()
                     Text("Desired amount of sleep")
                         .font(.headline)
@@ -41,9 +49,12 @@ struct ContentView: View {
             .toolbar{
                 Button("calculate", action: calculateBedTime)
             }
+            .alert(alertTitle, isPresented: $shoingAlert){
+                Button("OK"){}
+            }message: {
+                Text(alertMessage)
+            }
         }
-
-
         
     }
     func calculateBedTime() {
@@ -56,9 +67,14 @@ struct ContentView: View {
             
             let prediction = try model.prediction(wake: Double(hour + minute), estimatedSleep: sleepAmount, coffee: Double(coffeeAmount))
             let sleepTime = wakeUp - prediction.actualSleep
-        } catch{
             
+            alertTitle = "Your perfect ber time is..."
+            alertMessage = sleepTime.formatted(date: .omitted, time: .shortened)
+        } catch{
+            alertTitle = "It's a Error"
+            alertMessage = "There is a problem"
         }
+        shoingAlert = true
     }
 }
 
