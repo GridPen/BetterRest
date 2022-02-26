@@ -28,37 +28,42 @@ struct ContentView: View {
     }
     
     var body: some View {
-        
-        NavigationView{
+        NavigationView {
             Form {
-                VStack(alignment:.leading, spacing: 0){
+                Section{
                     Text("When you want to wake up?")
                     DatePicker("Please enter a time", selection: $wakeUp,  displayedComponents: [.hourAndMinute])
                         .labelsHidden()
                 }
-                VStack(alignment:.leading, spacing: 0){
+                Section{
                     Text("Desired amount of sleep")
                         .font(.headline)
                     Stepper("\(sleepAmount.formatted()) hours", value: $sleepAmount, in: 4...12, step: 0.25)
                 }
                 
-                VStack(alignment:.leading, spacing: 0){
+                Section{
                     Text("Your daily coffe intake")
                         .font(.headline)
-                    Stepper(coffeeAmount == 1 ? "1 cup" : "\(coffeeAmount) cups", value:$coffeeAmount,  in: 1...20)
+                    Picker(coffeeAmount == 1 ? "1 cup" : "\(coffeeAmount) cups", selection:$coffeeAmount){
+                        ForEach(1...15, id:\.self){ coffeeAmount in
+                             Text("\(coffeeAmount)")
+                        }
+                    }
+                    
                 }
-                
+                .navigationTitle("BetterRest")
+                .toolbar{
+                    Button("Calculate", action: calculateBedTime)
+                }
+                .alert(alertTitle, isPresented: $shoingAlert){
+                    Button("OK"){}
+                }message: {
+                    Text(alertMessage)
+                }
             }
-            .navigationTitle("BetterRest")
-            .toolbar{
-                Button("calculate", action: calculateBedTime)
-            }
-            .alert(alertTitle, isPresented: $shoingAlert){
-                Button("OK"){}
-            }message: {
-                Text(alertMessage)
-            }
+            
         }
+        
         
     }
     func calculateBedTime() {
