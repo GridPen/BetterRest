@@ -31,21 +31,23 @@ struct ContentView: View {
         
         NavigationView{
             Form {
-                VStack{
-                    Section{
-                        Text("When you want to wake up?")
-                            .font(.headline)
-                    }
+                VStack(alignment:.leading, spacing: 0){
+                    Text("When you want to wake up?")
                     DatePicker("Please enter a time", selection: $wakeUp,  displayedComponents: [.hourAndMinute])
                         .labelsHidden()
+                }
+                VStack(alignment:.leading, spacing: 0){
                     Text("Desired amount of sleep")
                         .font(.headline)
                     Stepper("\(sleepAmount.formatted()) hours", value: $sleepAmount, in: 4...12, step: 0.25)
+                }
+                
+                VStack(alignment:.leading, spacing: 0){
                     Text("Your daily coffe intake")
                         .font(.headline)
                     Stepper(coffeeAmount == 1 ? "1 cup" : "\(coffeeAmount) cups", value:$coffeeAmount,  in: 1...20)
-                    
                 }
+                
             }
             .navigationTitle("BetterRest")
             .toolbar{
